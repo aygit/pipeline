@@ -5,7 +5,18 @@ environment {
         ANDROID_HOME = '/Users/ayoemiloju/Library/Android/sdk'
     }
 
-  stages {
+
+stages {
+   stage('checkoutmovie') {
+     steps {
+       checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/aygit/moviewnew.git']]])
+
+     }
+
+  }
+
+
+  
     stage('Build') {
          steps {
          sh   'npm install'
