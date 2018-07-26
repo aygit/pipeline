@@ -9,7 +9,7 @@ environment {
 stages {
    stage('checkoutmovie') {
      steps {
-       checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/aygit/moviewnew.git']]])
+       checkout([$class: 'GitSCM', branches: [[name: '*/develop']], doGenerateSubmoduleConfigurations: false, submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/aygit/trail.git']]])
 
      }
 
