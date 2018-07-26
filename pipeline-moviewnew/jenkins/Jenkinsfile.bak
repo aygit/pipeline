@@ -1,0 +1,78 @@
+pipeline {
+   agent any
+
+
+
+  stages {
+   stage('checkout') {
+     steps {
+       checkout scm
+     }
+
+  }
+
+//  install npm and other modules required
+   stage('Build') {
+        steps {
+        sh 'npm install'
+      }
+    }
+
+
+
+  // do jest testing
+    stage('test') {
+      steps {
+       sh 'npm install'
+       sh 'npm test -- --ci --testResultsProcessor="jest-junit"'
+      }
+    }
+
+
+  // testing test
+    stage('pubtest') {
+     steps {
+    junit 'reports/*.xml'
+
+   }
+  }
+
+
+  //  android is built at this stage
+     stage('mobilebuild') {
+      steps {
+       sh './jenkins/scripts/fastlanebeta.sh'
+       echo 'app has ben successfully deployed to hockeyapp'
+    }
+   }
+
+
+ // testing test
+//    stage('pubtest') {
+ //    steps {
+ //   junit 'reports/*.xml'
+
+//  }
+// }
+
+
+ //publish to npm repo
+// stage('publish') {
+//    steps {
+ //    sh 'source ~/.profile'
+//     sh 'source ~/.bash_profile'
+//     sh 'npm publish'
+//    }
+
+// }
+
+}
+
+post {
+        always {
+            junit testResults: 'reports/*.xml'
+        }
+    }
+
+
+ }

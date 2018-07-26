@@ -1,0 +1,109 @@
+pipeline {
+   agent any
+
+
+
+  stages {
+   stage('checkoutmovie') {
+     steps {
+       checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/aygit/moviewnew.git']]])
+
+     }
+
+  }
+
+//  install npm and other modules required
+   stage('Buildmovie') {
+        steps {
+        sh 'npm install'
+      }
+    }
+
+
+
+  // do jest testing
+    stage('testmovie') {
+      steps {
+       sh 'npm install'
+       sh 'npm test -- --ci --testResultsProcessor="jest-junit"'
+      }
+    }
+
+
+  // testing movie
+    stage('pubtest') {
+     steps {
+    junit 'reports/*.xml'
+
+   }
+  }
+
+
+  //publish to npm repo
+  stage('publish') {
+    steps {
+      sh 'source ~/.profile'
+      sh 'source ~/.bash_profile'
+     sh 'npm publish'
+    }
+  }
+
+
+
+  stage('checkouttrail') {
+    steps {
+      checkout([$class: 'GitSCM', branches: [[name: '*/movienew']], doGenerateSubmoduleConfigurations: false, submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/aygit/movienew.git']]])
+
+    }
+
+  }
+
+  //  install npm and other modules required
+     stage('Buildtrail') {
+          steps {
+          sh 'npm install'
+        }
+      }
+
+
+
+    // do jest testing
+      stage('testtrail') {
+        steps {
+         sh 'npm install'
+         sh 'npm install jest'
+         sh 'npm test -- --ci --testResultsProcessor="jest-junit"'
+        }
+      }
+
+
+    // testing movie
+      stage('pubtrail') {
+       steps {
+      junit 'reports/*.xml'
+
+     }
+    }
+
+
+    //publish to npm repo
+    stage('publishtrail') {
+      steps {
+        sh 'source ~/.profile'
+        sh 'source ~/.bash_profile'
+       sh 'npm publish'
+      }
+    }
+
+}
+
+
+
+post {
+        always {
+            junit testResults: 'reports/*.xml'
+        }
+    }
+
+
+ }
